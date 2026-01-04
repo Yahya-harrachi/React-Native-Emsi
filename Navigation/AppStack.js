@@ -1,12 +1,21 @@
+import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import TodoListScreen from "../Screens/TodoListScreen";
-import TodoDetailsScreen from "../Screens/TodoDetailsScreen";
+import { useContext } from "react";
+import { AuthContext } from "../Context/AuthContext";
+import LoginScreen from "../Screens/LoginScreen";
+import AppDrawer from "./AppDrawer";
 const Stack = createNativeStackNavigator();
 export default function AppStack() {
+    const { user, loading } = useContext(AuthContext);
+    if (loading) return null;
     return (
-        <Stack.Navigator>
-            <Stack.Screen name="Liste" component={TodoListScreen} />
-            <Stack.Screen name="Détails" component={TodoDetailsScreen} />
-        </Stack.Navigator>
+        <NavigationContainer>
+            <Stack.Navigator screenOptions={{ headerShown: false }}>
+                {!user ? (
+                    <Stack.Screen name="Login" component={LoginScreen} />
+                ) : (
+                    <Stack.Screen name="App" component={AppDrawer} />
+                )}</Stack.Navigator>
+        </NavigationContainer>
     );
 }

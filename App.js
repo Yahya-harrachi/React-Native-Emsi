@@ -1,48 +1,14 @@
-import { useEffect, useState, useContext } from "react";
-import { View, StyleSheet, ActivityIndicator } from "react-native";
-import { initDB } from "./services/database";
-import { ThemeProvider, ThemeContext } from "./Context/ThemeContext";
-import TodoListOfflineScreen from "./Screens/TodoListOfflineScreen";
-function MainApp() {
-  const { theme } = useContext(ThemeContext);
+import { ThemeProvider } from "./Context/ThemeContext";
+import { AuthProvider } from "./Context/AuthContext";
+import AppStack from "./Navigation/AppStack";
+import { SafeAreaProvider } from "react-native-safe-area-context"; export default function App() {
   return (
-    <View
-      style={[
-        styles.container,
-        theme === "dark" ? styles.dark : styles.light,
-      ]}
-    >
-      <TodoListOfflineScreen />
-    </View>
+    <SafeAreaProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <AppStack />
+        </AuthProvider>
+      </ThemeProvider>
+    </SafeAreaProvider>
   );
 }
-export default function App() {
-  const [dbReady, setDbReady] = useState(false);
-  useEffect(() => {
-    const prepareDb = async () => {
-      await initDB();
-      // attendre SQLite
-      setDbReady(true); // OK pour afficher l’app
-    };
-    prepareDb();
-  }, []);
-  if (!dbReady) {
-    return <ActivityIndicator size="large" />;
-  }
-  return (
-    <ThemeProvider>
-      <MainApp />
-    </ThemeProvider>
-  );
-}
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: 40,
-  },
-  light: {
-    backgroundColor: "#ffffff",
-  }, dark: {
-    backgroundColor: "#121212",
-  },
-});
